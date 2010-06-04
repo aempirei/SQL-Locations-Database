@@ -1,0 +1,87 @@
+
+ USA Location and Population information built from free sources.
+
+ Copyright(c) 2009-2010
+ by Christopher Abad
+ aempirei@gmail.com
+ http://www.twentygoto10.com
+
+ This archive contains the original data sources as well as a SQL file for import into MySQL.
+
+ The data provided in the locations.sql is licensed under the Creative Commons Attribution-NonCommercial 3.0 United States
+ The data contained in ZIP1999.ZIP and zcta5.txt are made available to the public AS IS and I assume are public domain.
+ Links to the data from the IRS are made available to the public at the bottom of this document.
+
+ You are free:
+
+    * to Share — to copy, distribute, display, and perform the work
+    * to Remix — to make derivative works
+
+Under the following conditions:
+
+    * Attribution. You must attribute the work in the manner specified by the author or licensor
+      (but not in any way that suggests that they endorse you or your use of the work).
+
+    * Noncommercial. You may not use this work for commercial purposes.
+
+Please review the license in its entirety at http://creativecommons.org/licenses/by-nc/3.0/us/legalcode
+
+sample data:
+
+mysql> select * from locations limit 10;
++------+---------+----------------+-------+------------+---------+------------+--------+-----------+----------+--------------+
+| id   | zipcode | city           | state | state_abbr | country | population | income | longitude | latitude | country_abbr |
++------+---------+----------------+-------+------------+---------+------------+--------+-----------+----------+--------------+
+| 3359 |   94109 | san francisco  |       | CA         | USA     |      56322 |  81731 |  -122.422 |  37.7928 | US           |
+| 3360 |   94110 | san francisco  |       | CA         | USA     |      74633 |  45892 |  -122.415 |  37.7487 | US           |
+|  627 |   35004 | moody          |       | AL         | USA     |       6998 |  40373 |  -86.5025 |  33.6064 | US           |
+|  628 |   35005 | adamsville     |       | AL         | USA     |       8985 |  33890 |  -86.9597 |  33.5926 | US           |
+|  629 |   35006 | adger          |       | AL         | USA     |       3109 |  32926 |  -87.2396 |  33.4517 | US           |
+|  630 |   35007 | alabaster      |       | AL         | USA     |      20157 |  48647 |  -86.8087 |  33.2324 | US           |
+|  631 |   35010 | alexander city |       | AL         | USA     |      21732 |  34482 |  -85.9267 |  32.9034 | US           |
+|  632 |   35014 | alpine         |       | AL         | USA     |       4480 |  30737 |  -86.2772 |   33.356 | US           |
+|  633 |   35016 | arab           |       | AL         | USA     |      15619 |  37206 |  -86.4928 |  34.3237 | US           |
+|  634 |   35019 | baileyton      |       | AL         | USA     |       2097 |  27883 |  -86.6351 |  34.2925 | US           |
++------+---------+----------------+-------+------------+---------+------------+--------+-----------+----------+--------------+
+10 rows in set (0.00 sec)
+
+    The `income` column represents the average gross income (AGI) per 2001 tax return for the given zipcode.
+
+table format is as follows:
+
+    CREATE TABLE `locations` (
+
+      `id`              int(10) unsigned    NOT NULL AUTO_INCREMENT,
+      `zipcode`         int(10) unsigned    NOT NULL,
+      `city`            varchar(64)         NOT NULL,
+      `state`           varchar(64)         NOT NULL,
+      `state_abbr`      char(2)             NOT NULL,
+      `country`         varchar(64)         NOT NULL,
+      `population`      int(10) unsigned    DEFAULT NULL,
+      `income`          int(10) unsigned    DEFAULT NULL,
+      `longitude`       float               DEFAULT NULL,
+      `latitude`        float               DEFAULT NULL,
+      `country_abbr`    char(2)             NOT NULL,
+
+      PRIMARY KEY                   (`id`),
+      UNIQUE KEY    `zipcode`       (`zipcode`),
+      KEY           `income`        (`income`),
+      KEY           `population`    (`population`),
+      KEY           `longitude`     (`longitude`,`latitude`)
+
+    );
+
+--- Sources ---
+
+All data is from the US Census Bureau and the Internal Revenue Service
+
+The 5-Digit ZIP Code Tabulation Areas
+    http://www.census.gov/tiger/tms/gazetteer/zcta5.txt
+
+The 1999 U.S. Postal Service ZIP Codes
+    http://www.census.gov/geo/www/tiger/zip1999.html
+
+Individual Tax Statistics - Zip Code Data (SOI)
+    http://www.irs.gov/taxstats/indtaxstats/article/0,,id=96947,00.html
+    http://www.irs.gov/pub/irs-soi/01zptxt.txt
+    http://www.irs.gov/pub/irs-soi/01zp*.xls
